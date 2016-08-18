@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorator="layout/parent">
+  <head>
+    <title layout:title-pattern="$CONTENT_TITLE - $DECORATOR_TITLE">后台管理</title>
+  </head>
+
+  <body>
+
+	  <th:block layout:fragment="content">
+	  	<ul class="nav nav-tabs nav-justified">
+		  <li class="active"><a href="#">后台首页</a></li>
+		  <li><a href="#">服务器管理</a></li>
+		  <li><a href="#">CPanel包管理</a></li>
+		  <li><a href="#">用户管理</a></li>
+		</ul>
+	  	<th:block layout:fragment="admin_content"></th:block>
+	  </th:block>
+
+  </body>
+</html>

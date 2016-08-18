@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorator="layout/parent">
+<head>
+	<title>注册</title>
+	<link th:href="@{/static/signin.css}" rel="stylesheet" />
+</head>
+
+<body>
+
+	<form th:action="@{/register}" class="form-signin" layout:fragment="content">
+       <h2>欢迎您注册</h2>
+       <div class="form-group">
+       	<input type="text" name="username" class="form-control" placeholder="用户名" required="required" autofocus="autofocus" />
+        <p class="help-block">用户名为4-15个字符，汉子算两个。</p>
+       </div>
+       <div class="form-group">
+       	<div class="input-group">
+	       	<input type="password" name="password" class="form-control" placeholder="密码" required="required" />
+	       	<span class="input-group-addon"><a href="javascript:showPass()" class="glyphicon glyphicon-eye-open"></a></span>
+       	</div>
+        <p class="help-block">密码为6-20个字符。</p>
+       </div>
+       <div class="form-group">
+	   	<div class="input-group">
+	   		<div class="row">
+	   			<div class="col-xs-7">
+	   				<input type="text" name="captcha" class="form-control" placeholder="验证码" required="required" />
+	   			</div>
+	   			<div class="col-xs-5">
+	   				<img title="点我刷新" id="captcha-img" style="cursor: pointer; max-width: 100%; height: 43px" th:src="@{/api/captcha/show.jpg}"/>
+	   			</div>
+	   		</div>
+	   	</div>
+       </div>
+       <button class="btn btn-lg btn-primary btn-block" type="submit" disabled="disabled">注册</button>
+	</form>
+		
+		<th:block layout:fragment="js">
+			<script type="text/javascript">
+			
+				var captchaImaSrc = $('#captcha-img').attr('src');
+				function reCaptcha(){
+					$('#captcha-img').hide().attr('src', captchaImaSrc+"?"+new Date().getTime()).fadeIn();
+				}
+				$('#captcha-img').click(function(){
+					reCaptcha()
+				});
+				
+				$('form').formValidation({
+					framework: 'bootstrap',
+		        	locale: 'zh_CN',
+		        	message: "",
+		            fields: {
+		                username: {
+		                    validators: {
+		                        notEmpty: {
+		                        },
+		                        remote: {
+			                        url: '/api/valid/username',
+			                        delay: 500
+			                    },
+			                    blank: {}
+		                    }
+		                },
+		                password: {
+		                    validators: {
+		                        notEmpty: {
+		                        },
+		                        stringLength: {
+			                        min: 6,
+			                        max: 20,
+			                        trim: true
+			                    },
+			                    blank: {}
+		                    }
+		                },
+			            captcha: {
+			            	validators: {
+			                    notEmpty: {
+			                    },
+			                    remote: {
+			                        url: '/api/captcha/verify',
+			                        delay: 500
+			                    },
+			                    blank: {}
+			                }
+			            }
+		            }
+		        }).on('success.form.fv', function(e) {
+		            e.preventDefault();
+		            // Use Ajax to submit form data
+		            var $form = $(e.target),                    // The form instance
+            			fv    = $form.data('formValidation');   // FormValidation instance
+		            $.ajax({
+		                url: $form.attr('action'),
+		                type: 'POST',
+		                data: $form.serialize(),
+		                dataType:'json',
+		                success: function(data) {
+		                    if(data.success){
+		                    	location.href = 'login?success'
+		                    }else{
+		                    	for (var field in data.errorFields) {
+		                    		fv.resetField('captcha', true);
+		                            fv
+		                            .updateMessage(field, 'blank', data.errorFields[field])
+		                            .updateStatus(field, 'INVALID', 'blank');
+		                            reCaptcha();
+		                        }
+		                    }
+		                }
+		            });
+	        	}).on('err.field.fv', function(e, data) {
+	                // $(e.target)  --> The field element
+	                // data.fv      --> The FormValidation instance
+	                // data.field   --> The field name
+	                // data.element --> The field element
+
+	                // Hide the messages
+	               $(e.target).parents(".form-group")
+	                    .find('p[class="help-block"]').hide();
+	            });
+				
+				function showPass(){
+					var _this = $('input[name="password"]');
+					var type = _this.attr('type');
+					if(type=='password'){
+						_this.prop('type', 'text');
+						$('.glyphicon-eye-open').removeClass('glyphicon-eye-open').addClass('glyphicon-eye-close');
+					}else{
+						_this.prop('type', 'password');
+						$('.glyphicon-eye-close').removeClass('glyphicon-eye-close').addClass('glyphicon-eye-open');
+					}
+				}
+			</script>
+		</th:block>
+
+</body>
+</html>

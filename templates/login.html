@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorator="layout/parent">
+<head>
+	<title>登陆</title>
+	<link th:href="@{/static/signin.css}" rel="stylesheet" />
+    <style type="text/css">
+      .form-signin input[type="email"] {
+        margin-bottom: -1px;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+      .form-signin input[type="password"] {
+        margin-bottom: 10px;
+        border-top-left-radius: 0;
+        border-top-right-radius: 0;
+      }
+    </style>
+</head>
+
+<body>
+
+	<form class="form-signin" th:action="@{/login}" method="post" layout:fragment="content">
+       <h2 class="form-signin-heading">请登录</h2>
+       <p th:if="${param.success}" class="alert alert-success">感谢您的注册，请登录。</p>
+       <p th:if="${param.logout}" class="alert alert-success">您已经退出登录了</p>
+       <p th:if="${param.error}" th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}" class="alert alert-danger">账户或密码错误，请重试</p>
+       <input type="text" name="username" class="form-control" placeholder="用户名" required="required" autofocus="autofocus" />
+       <input type="password" name="password" class="form-control" placeholder="密码" required="required" />
+       <div class="checkbox">
+         <label>
+           <input type="checkbox" name="remember-me" /> 记住登录两周
+         </label>
+       </div>
+       <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+	</form>
+
+</body>
+</html>

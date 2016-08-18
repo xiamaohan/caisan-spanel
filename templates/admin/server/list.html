@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	layout:decorator="layout/admin">
+  <head>
+    <title>首页</title>
+  </head>
+
+  <body>
+
+	<th:block layout:fragment="admin_content">
+		<table class="table">
+		  <tr>
+		  	<th>名称</th>
+		  	<th>描述</th>
+		  	<th>操作</th>
+		  </tr>
+		</table>
+    </th:block>
+    
+  </body>
+</html>
